@@ -9,8 +9,6 @@ if (process.env.REACT_APP_API_URL) {
   axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 }
 
-const AuthContext = createContext();
-
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
