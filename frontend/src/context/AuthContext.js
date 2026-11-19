@@ -3,6 +3,14 @@ import axios from 'axios';
 
 const AuthContext = createContext();
 
+// In production the CRA proxy is inactive, so we need an absolute base URL.
+// REACT_APP_API_URL is set in .env (or the hosting provider's env vars).
+if (process.env.REACT_APP_API_URL) {
+  axios.defaults.baseURL = process.env.REACT_APP_API_URL;
+}
+
+const AuthContext = createContext();
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

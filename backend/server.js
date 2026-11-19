@@ -17,27 +17,34 @@ const PORT = process.env.PORT || 5000;
 
 // CORS origin check: in development allow any localhost/127.0.0.1 origin
 // (Flutter web runs on a random localhost port), in production use the fixed allowlist.
-const productionOrigins = ['https://rydo.com', 'https://admin.rydo.com'];
+// Add extra origins via ALLOWED_ORIGINS env var (comma-separated).
+const buildProductionOrigins = () => {
+  const defaults = ['https://rydo.com', 'https://admin.rydo.com'];
+  const extra = process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim()).filter(Boolean)
+    : [];
+  return [...new Set([...defaults, ...extra])];
+};
+
 const corsOriginCheck = (origin, callback) => {
   // Allow requests with no origin (mobile apps, curl, same-origin)
   if (!origin) return callback(null, true);
 
   if (process.env.NODE_ENV === 'production') {
+    const productionOrigins = buildProductionOrigins();
     return productionOrigins.includes(origin)
       ? callback(null, true)
-      : callback(new Error('Not allowed by CORS'));
+      : callback(new Error(`CORS: origin ${origin} not allowed`));
   }
 
   // Development: allow any localhost / 127.0.0.1 origin on any port
   const isLocalhost = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
-  return isLocalhost
-    ? callback(null, true)
-    : callback(null, true); // be permissive in dev
+  return isLocalhost ? callback(null, true) : callback(null, true);
 };
 
 const io = new Server(server, {
   cors: {
-    origin: process.env.NODE_ENV === 'production' ? productionOrigins : true,
+    origin: process.env.NODE_ENV === 'production' ? buildProductionOrigins() : true,
     methods: ['GET', 'POST']
   }
 });
