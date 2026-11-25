@@ -19,7 +19,13 @@ const PORT = process.env.PORT || 5000;
 // (Flutter web runs on a random localhost port), in production use the fixed allowlist.
 // Add extra origins via ALLOWED_ORIGINS env var (comma-separated).
 const buildProductionOrigins = () => {
-  const defaults = ['https://rydo.com', 'https://admin.rydo.com'];
+  const defaults = [
+    'https://rydo.com',
+    'https://admin.rydo.com',
+    'https://rydo-web-frontend.onrender.com',
+    'https://rydocustomerapp.vercel.app',
+    'https://rydocaptainapp.vercel.app'
+  ];
   const extra = process.env.ALLOWED_ORIGINS
     ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim()).filter(Boolean)
     : [];
@@ -32,9 +38,11 @@ const corsOriginCheck = (origin, callback) => {
 
   if (process.env.NODE_ENV === 'production') {
     const productionOrigins = buildProductionOrigins();
-    return productionOrigins.includes(origin)
-      ? callback(null, true)
-      : callback(new Error(`CORS: origin ${origin} not allowed`));
+    if (!productionOrigins.includes(origin)) {
+      console.warn(`CORS: origin ${origin} not allowed`);
+    }
+    // Reject by omitting CORS headers (browser blocks it) instead of a 500
+    return callback(null, productionOrigins.includes(origin));
   }
 
   // Development: allow any localhost / 127.0.0.1 origin on any port
