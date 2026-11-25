@@ -173,7 +173,7 @@ const Dashboard = () => {
                 <Line 
                   type="monotone" 
                   dataKey="revenue" 
-                  stroke="#1976d2" 
+                  stroke="#1a1a2e" 
                   strokeWidth={3}
                   name="Revenue (₹)"
                 />

@@ -93,7 +93,7 @@ const Navbar = ({ onMenuClick }) => {
               width: 32,
               height: 32,
               borderRadius: '8px',
-              background: 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)',
+              background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -141,7 +141,7 @@ const Navbar = ({ onMenuClick }) => {
                 border: '1px solid #e2e8f0'
               }}
             >
-              <Avatar sx={{ width: 32, height: 32, bgcolor: '#1976d2' }}>
+              <Avatar sx={{ width: 32, height: 32, bgcolor: '#1a1a2e' }}>
                 {user?.name?.charAt(0)}
               </Avatar>
             </IconButton>
@@ -175,3 +175,4 @@ const Navbar = ({ onMenuClick }) => {
 };
 
 export default Navbar;
+

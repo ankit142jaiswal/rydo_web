@@ -43,7 +43,7 @@ const CustomerDashboard = () => {
   };
 
   const services = [
-    { name: 'Bike Taxi', icon: <DirectionsCar />, color: '#1976d2', path: '/book?service=bike-taxi' },
+    { name: 'Bike Taxi', icon: <DirectionsCar />, color: '#1a1a2e', path: '/book?service=bike-taxi' },
     { name: 'Courier', icon: <LocalShipping />, color: '#4caf50', path: '/book?service=courier' },
     { name: 'Auto', icon: <DirectionsCar />, color: '#ff9800', path: '/book?service=auto', disabled: true },
     { name: 'Mini Truck', icon: <LocalShipping />, color: '#9c27b0', path: '/book?service=mini-truck', disabled: true }
@@ -67,7 +67,7 @@ const CustomerDashboard = () => {
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Avatar sx={{ bgcolor: '#1976d2' }}>
+                <Avatar sx={{ bgcolor: '#1a1a2e' }}>
                   <AccountBalanceWallet />
                 </Avatar>
                 <Box>

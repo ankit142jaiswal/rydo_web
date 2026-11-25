@@ -46,7 +46,7 @@ const BookRide = () => {
   const [error, setError] = useState('');
 
   const services = [
-    { id: 'bike-taxi', name: 'Bike Taxi', icon: <DirectionsCar />, color: '#1976d2', available: true },
+    { id: 'bike-taxi', name: 'Bike Taxi', icon: <DirectionsCar />, color: '#1a1a2e', available: true },
     { id: 'courier', name: 'Courier', icon: <LocalShipping />, color: '#4caf50', available: true },
     { id: 'auto', name: 'Auto', icon: <DirectionsCar />, color: '#ff9800', available: false },
     { id: 'mini-truck', name: 'Mini Truck', icon: <LocalShipping />, color: '#9c27b0', available: false }

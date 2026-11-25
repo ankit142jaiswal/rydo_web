@@ -267,7 +267,7 @@ const CustomerWallet = () => {
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Avatar sx={{ bgcolor: '#1976d2' }}>
+                <Avatar sx={{ bgcolor: '#1a1a2e' }}>
                   <AccountBalanceWallet />
                 </Avatar>
                 <Box>
@@ -555,8 +555,8 @@ const CustomerWallet = () => {
                       variant="outlined"
                       sx={{
                         cursor: 'pointer',
-                        border: paymentMethod === method.id ? '2px solid #1976d2' : '1px solid #e0e0e0',
-                        '&:hover': { borderColor: '#1976d2' }
+                        border: paymentMethod === method.id ? '2px solid #FFC107' : '1px solid #e0e0e0',
+                        '&:hover': { borderColor: '#1a1a2e' }
                       }}
                       onClick={() => setPaymentMethod(method.id)}
                     >
@@ -595,3 +595,4 @@ const CustomerWallet = () => {
 };
 
 export default CustomerWallet;
+

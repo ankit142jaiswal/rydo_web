@@ -83,7 +83,7 @@ const DriverProfile = () => {
           <Card>
             <CardContent sx={{ p: 4 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                <Avatar sx={{ width: 80, height: 80, mr: 3, bgcolor: '#1976d2' }}>
+                <Avatar sx={{ width: 80, height: 80, mr: 3, bgcolor: '#1a1a2e' }}>
                   <DirectionsCar sx={{ fontSize: 40 }} />
                 </Avatar>
                 <Box>

@@ -18,38 +18,34 @@ export const SocketProvider = ({ children }) => {
   const { user } = useAuth();
 
   useEffect(() => {
-    if (user) {
-      const newSocket = io(process.env.REACT_APP_SOCKET_URL || 'https://rydo-web.onrender.com', {
-        auth: {
-          token: localStorage.getItem('token')
+    if (!user) return;
+
+    const newSocket = io(
+      process.env.REACT_APP_SOCKET_URL || 'https://rydo-web.onrender.com',
+      { auth: { token: localStorage.getItem('token') } }
+    );
+
+    newSocket.on('connect', () => {
+      setConnected(true);
+      // Join the room for this user so targeted events are delivered
+      const userId = user._id || user.id || user.userId;
+      if (userId) {
+        if (user.role === 'driver') {
+          newSocket.emit('join_driver', userId);
+        } else if (user.role === 'customer') {
+          newSocket.emit('join_customer', userId);
         }
-      });
+      }
+    });
 
-      newSocket.on('connect', () => {
-        setConnected(true);
-        console.log('Connected to server');
-      });
+    newSocket.on('disconnect', () => setConnected(false));
 
-      newSocket.on('disconnect', () => {
-        setConnected(false);
-        console.log('Disconnected from server');
-      });
-
-      setSocket(newSocket);
-
-      return () => {
-        newSocket.close();
-      };
-    }
-  }, [user?._id]);
-
-  const value = {
-    socket,
-    connected
-  };
+    setSocket(newSocket);
+    return () => newSocket.close();
+  }, [user?._id, user?.id]);
 
   return (
-    <SocketContext.Provider value={value}>
+    <SocketContext.Provider value={{ socket, connected }}>
       {children}
     </SocketContext.Provider>
   );

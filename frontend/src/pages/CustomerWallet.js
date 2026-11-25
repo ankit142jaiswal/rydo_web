@@ -147,7 +147,7 @@ const CustomerWallet = () => {
         {/* Wallet Balance Card */}
         <Grid item xs={12} md={6}>
           <Card sx={{ 
-            background: 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)',
+            background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
             color: 'white'
           }}>
             <CardContent sx={{ p: 4 }}>
@@ -336,3 +336,4 @@ const CustomerWallet = () => {
 };
 
 export default CustomerWallet;
+

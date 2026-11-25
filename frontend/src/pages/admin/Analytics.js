@@ -257,8 +257,8 @@ const Analytics = () => {
                   <AreaChart data={revenueData}>
                     <defs>
                       <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#1976d2" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="#1976d2" stopOpacity={0}/>
+                        <stop offset="5%" stopColor="#1a1a2e" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#1a1a2e" stopOpacity={0}/>
                       </linearGradient>
                       <linearGradient id="colorRides" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="#4caf50" stopOpacity={0.3}/>
@@ -274,7 +274,7 @@ const Analytics = () => {
                       yAxisId="left"
                       type="monotone" 
                       dataKey="revenue" 
-                      stroke="#1976d2" 
+                      stroke="#1a1a2e" 
                       fillOpacity={1} 
                       fill="url(#colorRevenue)"
                     />
@@ -304,7 +304,7 @@ const Analytics = () => {
                     <XAxis dataKey="hour" />
                     <YAxis />
                     <Tooltip />
-                    <Bar dataKey="rides" fill="#1976d2" />
+                    <Bar dataKey="rides" fill="#1a1a2e" />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>

@@ -35,7 +35,7 @@ const Analytics = () => {
     }
   };
 
-  const COLORS = ['#1976d2', '#4caf50', '#ff9800', '#9c27b0', '#f44336'];
+  const COLORS = ['#1a1a2e', '#4caf50', '#ff9800', '#9c27b0', '#f44336'];
 
   return (
     <Box>
@@ -70,7 +70,7 @@ const Analytics = () => {
                 <XAxis dataKey="_id" />
                 <YAxis />
                 <Tooltip />
-                <Line type="monotone" dataKey="count" stroke="#1976d2" strokeWidth={2} />
+                <Line type="monotone" dataKey="count" stroke="#1a1a2e" strokeWidth={2} />
                 <Line type="monotone" dataKey="completed" stroke="#4caf50" strokeWidth={2} />
               </LineChart>
             </ResponsiveContainer>

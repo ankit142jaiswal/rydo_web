@@ -2,6 +2,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { validationResult, body } = require('express-validator');
+const { authenticateToken } = require('../middleware/auth');
 const router = express.Router();
 
 // Generate JWT Token
@@ -128,47 +129,31 @@ router.post('/login', [
   }
 });
 
-// Get User Profile
-router.get('/profile', async (req, res) => {
+// Get User Profile — uses shared auth middleware
+router.get('/profile', authenticateToken, async (req, res) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) {
-      return res.status(401).json({ success: false, message: 'No token provided' });
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'rydo_secret');
-    const user = await User.findById(decoded.userId).select('-password');
-
+    const user = await User.findById(req.user.userId).select('-password');
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
-
     res.json({ success: true, user });
   } catch (error) {
-    res.status(401).json({ success: false, message: 'Invalid token' });
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
-// Update Profile
-router.put('/profile', async (req, res) => {
+// Update Profile — uses shared auth middleware
+router.put('/profile', authenticateToken, async (req, res) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) {
-      return res.status(401).json({ success: false, message: 'No token provided' });
-    }
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'rydo_secret');
-    
     // Whitelist allowed fields to prevent mass assignment
     const allowedFields = ['name', 'phone', 'avatar', 'addresses'];
     const updates = {};
     Object.keys(req.body).forEach(key => {
-      if (allowedFields.includes(key)) {
-        updates[key] = req.body[key];
-      }
+      if (allowedFields.includes(key)) updates[key] = req.body[key];
     });
-    
+
     const user = await User.findByIdAndUpdate(
-      decoded.userId,
+      req.user.userId,
       { ...updates, updatedAt: Date.now() },
       { new: true }
     ).select('-password');
@@ -176,7 +161,6 @@ router.put('/profile', async (req, res) => {
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
-
     res.json({ success: true, user });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

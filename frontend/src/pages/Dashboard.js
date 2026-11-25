@@ -153,7 +153,7 @@ const Dashboard = () => {
             subtitle={`${dashboardData.rides.today} today`}
             trend="+12% from last month"
             icon={<DirectionsCar sx={{ fontSize: 24 }} />}
-            color="#1976d2"
+            color="#1a1a2e"
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
@@ -198,8 +198,8 @@ const Dashboard = () => {
               <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="colorRides" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#1976d2" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#1976d2" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#1a1a2e" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#1a1a2e" stopOpacity={0}/>
                   </linearGradient>
                   <linearGradient id="colorCompleted" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
@@ -220,7 +220,7 @@ const Dashboard = () => {
                 <Area 
                   type="monotone" 
                   dataKey="totalRides" 
-                  stroke="#1976d2" 
+                  stroke="#1a1a2e" 
                   fillOpacity={1} 
                   fill="url(#colorRides)"
                   strokeWidth={2}
@@ -275,7 +275,7 @@ const Dashboard = () => {
                       borderRadius: 3,
                       backgroundColor: '#e0f2fe',
                       '& .MuiLinearProgress-bar': {
-                        backgroundColor: '#1976d2'
+                        backgroundColor: '#1a1a2e'
                       }
                     }} 
                   />
@@ -322,7 +322,7 @@ const Dashboard = () => {
             <TableBody>
               {dashboardData.recentRides.slice(0, 8).map((ride) => (
                 <TableRow key={ride._id} sx={{ '&:hover': { backgroundColor: '#f8fafc' } }}>
-                  <TableCell sx={{ fontWeight: 500, color: '#1976d2' }}>{ride.rideId}</TableCell>
+                  <TableCell sx={{ fontWeight: 500, color: '#1a1a2e' }}>{ride.rideId}</TableCell>
                   <TableCell>{ride.customer?.name || 'N/A'}</TableCell>
                   <TableCell>{ride.driver?.name || 'Unassigned'}</TableCell>
                   <TableCell>

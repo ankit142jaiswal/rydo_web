@@ -77,7 +77,7 @@ const CustomerDashboard = () => {
   };
 
   const [quickActions] = useState([
-    { title: 'Book a Ride', icon: DirectionsCar, path: '/customer/book', color: '#1976d2' },
+    { title: 'Book a Ride', icon: DirectionsCar, path: '/customer/book', color: '#1a1a2e' },
     { title: 'Ride History', icon: History, path: '/customer/rides', color: '#388e3c' },
     { title: 'My Wallet', icon: AccountBalanceWallet, path: '/customer/wallet', color: '#f57c00' }
   ]);
@@ -94,7 +94,7 @@ const CustomerDashboard = () => {
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Avatar sx={{ bgcolor: '#1976d2' }}>
+                <Avatar sx={{ bgcolor: '#1a1a2e' }}>
                   <DirectionsCar />
                 </Avatar>
                 <Box>

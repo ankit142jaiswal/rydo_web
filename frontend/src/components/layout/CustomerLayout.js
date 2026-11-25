@@ -6,7 +6,6 @@ import {
   Toolbar,
   List,
   Typography,
-  Divider,
   IconButton,
   ListItem,
   ListItemButton,
@@ -14,34 +13,142 @@ import {
   ListItemText,
   Menu,
   MenuItem,
+  Avatar,
+  Tooltip,
   Badge,
-  Avatar
 } from '@mui/material';
 import {
   Menu as MenuIcon,
   Dashboard,
   DirectionsCar,
-  AccountBalanceWallet,
   History,
+  AccountBalanceWallet,
   Person,
   Notifications,
   Settings,
-  AccountCircle,
-  Logout
+  Logout,
+  ChevronRight,
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import axios from 'axios';
 
-const drawerWidth = 240;
+const DRAWER_WIDTH = 260;
 
-const menuItems = [
-  { text: 'Dashboard', icon: Dashboard, path: '/customer' },
-  { text: 'Book Ride', icon: DirectionsCar, path: '/customer/book' },
-  { text: 'My Rides', icon: History, path: '/customer/rides' },
-  { text: 'Wallet', icon: AccountBalanceWallet, path: '/customer/wallet' },
-  { text: 'Settings', icon: Settings, path: '/customer/settings' },
+const NAV_ITEMS = [
+  { text: 'Dashboard',     icon: Dashboard,            path: '/customer' },
+  { text: 'Book Ride',     icon: DirectionsCar,         path: '/customer/book' },
+  { text: 'My Rides',      icon: History,              path: '/customer/rides' },
+  { text: 'Wallet',        icon: AccountBalanceWallet, path: '/customer/wallet' },
+  { text: 'Profile',       icon: Person,               path: '/customer/profile' },
+  { text: 'Notifications', icon: Notifications,        path: '/customer/notifications' },
+  { text: 'Settings',      icon: Settings,             path: '/customer/settings' },
 ];
+
+function SidebarContent({ location, navigate, onItemClick }) {
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      {/* Logo */}
+      <Box
+        sx={{
+          px: 2.5,
+          py: 2.5,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1.5,
+          borderBottom: '1px solid #f1f5f9',
+          minHeight: 72,
+        }}
+      >
+        <img
+          src="/rydo_logo.png"
+          alt="Rydo"
+          style={{ width: 40, height: 40, objectFit: 'contain', backgroundColor: '#fff', borderRadius: 8, padding: 4 }}
+        />
+        <Box>
+          <Typography variant="h6" sx={{ fontWeight: 800, color: '#1a1a2e', lineHeight: 1 }}>
+            Rydo
+          </Typography>
+          <Typography variant="caption" sx={{ color: '#94a3b8', fontWeight: 500 }}>
+            Customer Portal
+          </Typography>
+        </Box>
+      </Box>
+
+      {/* Nav items */}
+      <Box sx={{ flex: 1, overflowY: 'auto', py: 1.5 }}>
+        <List disablePadding>
+          {NAV_ITEMS.map((item) => {
+            const isActive =
+              item.path === '/customer'
+                ? location.pathname === '/customer' || location.pathname === '/customer/'
+                : location.pathname.startsWith(item.path);
+            return (
+              <ListItem key={item.text} disablePadding sx={{ px: 1, mb: 0.25 }}>
+                <ListItemButton
+                  onClick={() => { navigate(item.path); onItemClick?.(); }}
+                  sx={{
+                    borderRadius: 2,
+                    px: 1.5,
+                    py: 1.1,
+                    transition: 'all 0.15s ease',
+                    ...(isActive
+                      ? {
+                          background: 'linear-gradient(90deg, #fff8e1, #fff3cd)',
+                          '& .MuiListItemIcon-root': { color: '#FF8F00' },
+                          '& .MuiListItemText-primary': { color: '#FF8F00', fontWeight: 700 },
+                          boxShadow: '0 2px 8px rgba(255,193,7,0.2)',
+                          borderLeft: '3px solid #FFC107',
+                        }
+                      : {
+                          '& .MuiListItemIcon-root': { color: '#94a3b8' },
+                          '& .MuiListItemText-primary': { color: '#475569', fontWeight: 500 },
+                          '&:hover': {
+                            backgroundColor: '#f8fafc',
+                            '& .MuiListItemIcon-root': { color: '#FFC107' },
+                          },
+                        }),
+                  }}
+                >
+                  <ListItemIcon sx={{ minWidth: 36 }}>
+                    <item.icon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={item.text}
+                    primaryTypographyProps={{ fontSize: '0.875rem' }}
+                  />
+                  {isActive && (
+                    <ChevronRight sx={{ fontSize: 16, color: '#FFC107', opacity: 0.7 }} />
+                  )}
+                </ListItemButton>
+              </ListItem>
+            );
+          })}
+        </List>
+      </Box>
+
+      {/* Bottom branding */}
+      <Box
+        sx={{
+          px: 2.5,
+          py: 2,
+          borderTop: '1px solid #f1f5f9',
+          background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+          mx: 1,
+          mb: 1,
+          borderRadius: 2,
+        }}
+      >
+        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.5)', display: 'block' }}>
+          Rydo Customer v2.0
+        </Typography>
+        <Typography variant="caption" sx={{ color: 'rgba(255,193,7,0.7)', fontWeight: 600 }}>
+          Smart Ride Platform
+        </Typography>
+      </Box>
+    </Box>
+  );
+}
 
 const CustomerLayout = ({ children }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -49,7 +156,7 @@ const CustomerLayout = ({ children }) => {
   const [unreadCount, setUnreadCount] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
 
   useEffect(() => {
     const fetchUnread = async () => {
@@ -59,163 +166,231 @@ const CustomerLayout = ({ children }) => {
           setUnreadCount(response.data.unreadCount || 0);
         }
       } catch (error) {
-        console.error('Error fetching notifications:', error);
+        // silent — notification count is non-critical
       }
     };
     fetchUnread();
+    // Refresh badge every 60 seconds
+    const interval = setInterval(fetchUnread, 60000);
+    return () => clearInterval(interval);
   }, []);
 
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
-
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
+  const handleMenuOpen = (e) => setAnchorEl(e.currentTarget);
+  const handleMenuClose = () => setAnchorEl(null);
 
   const handleLogout = () => {
-    handleClose();
+    handleMenuClose();
     logout();
   };
 
   const handleProfile = () => {
-    handleClose();
+    handleMenuClose();
     navigate('/customer/profile');
   };
 
-  const drawer = (
-    <div>
-      <Toolbar>
-        <Typography variant="h6" noWrap component="div">
-          RYDO Customer
-        </Typography>
-      </Toolbar>
-      <Divider />
-      <List>
-        {menuItems.map((item) => (
-          <ListItem key={item.text} disablePadding>
-            <ListItemButton
-              selected={location.pathname === item.path}
-              onClick={() => navigate(item.path)}
-            >
-              <ListItemIcon>
-                <item.icon />
-              </ListItemIcon>
-              <ListItemText primary={item.text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-    </div>
+  const currentPage = NAV_ITEMS.find((item) =>
+    item.path === '/customer'
+      ? location.pathname === '/customer' || location.pathname === '/customer/'
+      : location.pathname.startsWith(item.path)
   );
 
+  const userInitial = user?.name ? user.name.charAt(0).toUpperCase() : 'C';
+
   return (
-    <Box sx={{ display: 'flex' }}>
-      <AppBar
-        position="fixed"
+    <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#f5f6fa' }}>
+      {/* Permanent desktop sidebar */}
+      <Drawer
+        variant="permanent"
         sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
-          backgroundColor: '#1976d2'
+          display: { xs: 'none', md: 'block' },
+          width: DRAWER_WIDTH,
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
+            width: DRAWER_WIDTH,
+            boxSizing: 'border-box',
+            border: 'none',
+            boxShadow: '2px 0 12px rgba(0,0,0,0.06)',
+            bgcolor: '#ffffff',
+          },
         }}
       >
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            Customer Dashboard
-          </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        <SidebarContent location={location} navigate={navigate} />
+      </Drawer>
+
+      {/* Temporary mobile drawer */}
+      <Drawer
+        variant="temporary"
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+        ModalProps={{ keepMounted: true }}
+        sx={{
+          display: { xs: 'block', md: 'none' },
+          '& .MuiDrawer-paper': {
+            width: DRAWER_WIDTH,
+            boxSizing: 'border-box',
+            border: 'none',
+          },
+        }}
+      >
+        <SidebarContent
+          location={location}
+          navigate={navigate}
+          onItemClick={() => setMobileOpen(false)}
+        />
+      </Drawer>
+
+      {/* Main area */}
+      <Box
+        sx={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          minWidth: 0,
+          ml: { md: `${DRAWER_WIDTH}px` },
+        }}
+      >
+        {/* Top AppBar */}
+        <AppBar
+          position="sticky"
+          elevation={0}
+          sx={{
+            background: 'linear-gradient(90deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%)',
+            borderBottom: '1px solid rgba(255,255,255,0.08)',
+            zIndex: (theme) => theme.zIndex.drawer - 1,
+          }}
+        >
+          <Toolbar sx={{ gap: 1, minHeight: { xs: 60, sm: 68 } }}>
+            {/* Mobile hamburger */}
             <IconButton
-              size="large"
-              aria-label="notifications"
-              onClick={() => navigate('/customer/notifications')}
               color="inherit"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ display: { md: 'none' }, color: 'rgba(255,255,255,0.8)' }}
             >
-              <Badge badgeContent={unreadCount} color="error">
-                <Notifications />
-              </Badge>
+              <MenuIcon />
             </IconButton>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleMenu}
-              color="inherit"
+
+            {/* Mobile brand */}
+            <Box
+              sx={{
+                display: { xs: 'flex', md: 'none' },
+                alignItems: 'center',
+                gap: 1,
+                flex: 1,
+              }}
             >
-              <AccountCircle />
-            </IconButton>
+              <img
+                src="/rydo_logo.png"
+                alt="Rydo"
+                style={{ width: 40, height: 40, objectFit: 'contain', backgroundColor: '#fff', borderRadius: 8, padding: 4 }}
+              />
+              <Typography variant="h6" sx={{ fontWeight: 800, color: '#FFC107' }}>
+                Rydo
+              </Typography>
+            </Box>
+
+            {/* Breadcrumb — desktop */}
+            <Box sx={{ display: { xs: 'none', md: 'flex' }, flex: 1, alignItems: 'center', gap: 1 }}>
+              <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.4)', fontWeight: 500 }}>
+                Customer
+              </Typography>
+              <Typography sx={{ color: 'rgba(255,255,255,0.3)', fontSize: 14 }}>/</Typography>
+              <Typography variant="body1" sx={{ color: '#ffffff', fontWeight: 600 }}>
+                {currentPage?.text ?? 'Dashboard'}
+              </Typography>
+            </Box>
+
+            {/* Right actions */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Tooltip title="Notifications">
+                <IconButton
+                  onClick={() => navigate('/customer/notifications')}
+                  sx={{
+                    color: 'rgba(255,255,255,0.7)',
+                    '&:hover': { bgcolor: 'rgba(255,255,255,0.08)', color: '#FFC107' },
+                  }}
+                >
+                  <Badge badgeContent={unreadCount || null} color="error">
+                    <Notifications fontSize="small" />
+                  </Badge>
+                </IconButton>
+              </Tooltip>
+
+              <Tooltip title={user?.name ?? 'Customer'}>
+                <IconButton onClick={handleMenuOpen} sx={{ p: 0.5 }}>
+                  <Avatar
+                    sx={{
+                      width: 36,
+                      height: 36,
+                      background: 'linear-gradient(135deg, #FFC107 0%, #FF8F00 100%)',
+                      color: '#1a1a1a',
+                      fontWeight: 700,
+                      fontSize: '0.9rem',
+                      border: '2px solid rgba(255,255,255,0.2)',
+                    }}
+                  >
+                    {userInitial}
+                  </Avatar>
+                </IconButton>
+              </Tooltip>
+            </Box>
+          </Toolbar>
+        </AppBar>
+
+        {/* Avatar dropdown */}
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+          transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+          PaperProps={{
+            sx: {
+              mt: 1,
+              minWidth: 200,
+              borderRadius: 2,
+              boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+              border: '1px solid #f1f5f9',
+            },
+          }}
+        >
+          <Box sx={{ px: 2, py: 1.5, borderBottom: '1px solid #f1f5f9' }}>
+            <Typography variant="body2" sx={{ fontWeight: 700, color: '#1a1a2e' }}>
+              {user?.name ?? 'Customer'}
+            </Typography>
+            <Typography variant="caption" sx={{ color: '#94a3b8' }}>
+              {user?.email ?? ''}
+            </Typography>
           </Box>
-          <Menu
-            id="menu-appbar"
-            anchorEl={anchorEl}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'right',
-            }}
-            keepMounted
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
+          <MenuItem
+            onClick={handleProfile}
+            sx={{ gap: 1.5, py: 1.25, mx: 0.5, mt: 0.5, borderRadius: 1.5 }}
           >
-            <MenuItem onClick={handleProfile}>Profile</MenuItem>
-            <MenuItem onClick={handleLogout}>
-              <Logout sx={{ mr: 1 }} />
-              Logout
-            </MenuItem>
-          </Menu>
-        </Toolbar>
-      </AppBar>
-      <Box
-        component="nav"
-        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-      >
-        <Drawer
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true,
-          }}
+            <Person fontSize="small" sx={{ color: '#94a3b8' }} />
+            <Typography variant="body2">Profile</Typography>
+          </MenuItem>
+          <MenuItem
+            onClick={handleLogout}
+            sx={{ gap: 1.5, py: 1.25, mx: 0.5, mb: 0.5, borderRadius: 1.5, color: '#ef4444' }}
+          >
+            <Logout fontSize="small" />
+            <Typography variant="body2">Logout</Typography>
+          </MenuItem>
+        </Menu>
+
+        {/* Page content */}
+        <Box
+          component="main"
           sx={{
-            display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            flex: 1,
+            p: { xs: 2, sm: 3 },
+            minHeight: 0,
+            overflowY: 'auto',
           }}
         >
-          {drawer}
-        </Drawer>
-        <Drawer
-          variant="permanent"
-          sx={{
-            display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-          }}
-          open
-        >
-          {drawer}
-        </Drawer>
-      </Box>
-      <Box
-        component="main"
-        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
-      >
-        <Toolbar />
-        {children}
+          {children}
+        </Box>
       </Box>
     </Box>
   );

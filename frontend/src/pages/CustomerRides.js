@@ -151,7 +151,7 @@ const CustomerRides = () => {
                 <CardContent>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                      <Box sx={{ color: '#1976d2' }}>
+                      <Box sx={{ color: '#1a1a2e' }}>
                         {getStatusIcon(ride.serviceType)}
                       </Box>
                       <Box>

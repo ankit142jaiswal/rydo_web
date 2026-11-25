@@ -72,7 +72,7 @@ const CustomerProfile = () => {
           <Card>
             <CardContent sx={{ p: 4 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                <Avatar sx={{ width: 80, height: 80, mr: 3, bgcolor: '#1976d2' }}>
+                <Avatar sx={{ width: 80, height: 80, mr: 3, bgcolor: '#1a1a2e' }}>
                   <Person sx={{ fontSize: 40 }} />
                 </Avatar>
                 <Box>
@@ -177,7 +177,7 @@ const CustomerProfile = () => {
                 <Typography variant="body2" color="textSecondary">
                   Wallet Balance
                 </Typography>
-                <Typography variant="body1" sx={{ fontWeight: 500, color: '#1976d2' }}>
+                <Typography variant="body1" sx={{ fontWeight: 500, color: '#1a1a2e' }}>
                   ₹{user?.wallet || 0}
                 </Typography>
               </Box>

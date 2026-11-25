@@ -33,7 +33,7 @@ export const initiatePayment = async (orderData, onSuccess, onFailure) => {
       contact: orderData.customerPhone || ''
     },
     theme: {
-      color: '#1976d2'
+      color: '#FFC107'
     },
     modal: {
       ondismiss: function() {
