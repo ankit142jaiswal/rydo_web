@@ -32,28 +32,39 @@ const buildProductionOrigins = () => {
   return [...new Set([...defaults, ...extra])];
 };
 
+// Origin patterns that are always allowed (Rydo deployments + local development).
+// Matches: rydo*.vercel.app (incl. preview URLs), rydo*.onrender.com,
+// and localhost / 127.0.0.1 on any port (Flutter web uses random ports).
+const allowedOriginPatterns = [
+  /^https:\/\/([a-z0-9-]+\.)*rydo[a-z0-9-]*\.vercel\.app$/i,
+  /^https:\/\/rydo[a-z0-9-]*\.onrender\.com$/i,
+  /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/
+];
+
+const isOriginAllowed = (origin) =>
+  buildProductionOrigins().includes(origin) ||
+  allowedOriginPatterns.some((re) => re.test(origin));
+
 const corsOriginCheck = (origin, callback) => {
   // Allow requests with no origin (mobile apps, curl, same-origin)
   if (!origin) return callback(null, true);
 
   if (process.env.NODE_ENV === 'production') {
-    const productionOrigins = buildProductionOrigins();
-    if (!productionOrigins.includes(origin)) {
-      console.warn(`CORS: origin ${origin} not allowed`);
-    }
+    const allowed = isOriginAllowed(origin);
+    if (!allowed) console.warn(`CORS: origin ${origin} not allowed`);
     // Reject by omitting CORS headers (browser blocks it) instead of a 500
-    return callback(null, productionOrigins.includes(origin));
+    return callback(null, allowed);
   }
 
-  // Development: allow any localhost / 127.0.0.1 origin on any port
-  const isLocalhost = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
-  return isLocalhost ? callback(null, true) : callback(null, true);
+  // Development: allow everything
+  return callback(null, true);
 };
 
 const io = new Server(server, {
   cors: {
-    origin: process.env.NODE_ENV === 'production' ? buildProductionOrigins() : true,
-    methods: ['GET', 'POST']
+    origin: corsOriginCheck,
+    methods: ['GET', 'POST'],
+    credentials: true
   }
 });
 
